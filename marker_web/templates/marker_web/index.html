@@ -1,7 +1,74 @@
 {% extends "marker_web/layout.html" %}
-
+{% load static %}
+{% block title %}Home{% endblock %}
 {% block body %}
-<div class="mb-3">
-    
+<div class="jumbotron container-fluid bg-white">
+    <div class="row align-items-center">
+        <img class="col-sm-3 col-6 p-2 m-auto" src="{% static 'marker_web/random-img.png' %}">
+            <div class="col-sm-9 col-12 p-4 text-lg">
+                <h1>Welcome to <span class="text-purple">Marker<b>AI</b></span></h1>
+                <p>For those of us who would like to save time on marking exam answers ourselves, Marker AI offers a suitable solution. It lets students practice past papers from a particular year, providing a space to answer the questions digitally and checking their answers using Natural Language Processing AI.</p>
+                <a href="#practice">
+                    <button class="btn btn-purple">
+                        Try MarkerAI
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron container-fluid bg-white" id="practice">
+    <div class="row align-items-center">
+        <div class="col-sm-9 col-12 p-4">
+            <h1>Choose a <b class="text-purple">paper</b> you'd like to practice:</h1>
+            <p>
+                <form action="/" method="get">
+                    <div class="d-flex flex-row align-items-center my-2">
+                        <h4>Subject: </h4>
+                        <select class="form-select form-select-sm form-control">
+                            <option selected disabled>Open this select menu </option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="d-flex flex-row align-items-center my-2">
+                        <h4>Season/Month: </h4>
+                        <select class="form-select form-select-sm form-control">
+                            <option selected disabled>Open this select menu </option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="d-flex flex-row align-items-center my-2">
+                        <h4>Year: </h4>
+                        <select class="form-select form-select-sm form-control">
+                            <option selected disabled>Open this select menu </option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="d-flex flex-row align-items-center my-2">
+                        <h4>Variant: </h4>
+                        <select class="form-select form-select-sm form-control">
+                            <option selected disabled>Open this select menu </option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div><br>
+                <button type="submit" class="btn btn-purple">
+                        Practice paper
+                    </button>
+                    <button type="button" class="btn btn-light border">
+                        Clear selection
+                    </button>
+                </form>
+            </p>
+        </div>
+        <img class="col-sm-3 col-6 p-2" src="{% static 'marker_web/random-img.png' %}">
+    </div>
 </div>
 {% endblock %}
