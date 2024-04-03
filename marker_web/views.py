@@ -4,7 +4,7 @@ from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
-    available_years
+    available_years = range(2)
     return render(request, "marker_web/index.html")
 
 def about(request):
