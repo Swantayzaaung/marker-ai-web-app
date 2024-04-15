@@ -1,12 +1,13 @@
 {% extends "marker_web/layout.html" %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}Home{% endblock %}
 {% block body %}
 <div class="jumbotron container-fluid bg-white">
     <div class="row align-items-center">
-        <img class="col-sm-3 col-6 p-2 m-auto" src="{% static 'marker_web/random-img.png' %}">
+        <img class="col-sm-3 col-6 p-2 m-auto" src="{% static 'marker_web/page pic 2.png' %}">
             <div class="col-sm-9 col-12 p-4 text-lg">
-                <h1>Welcome to <span class="text-purple">Marker<b>AI</b></span></h1>
+                <h3>Welcome to <span class="text-purple">Marker<b>AI</b></span></h3>
                 <p>For those of us who would like to save time on marking exam answers ourselves, Marker AI offers a suitable solution. It lets students practice past papers from a particular year, providing a space to answer the questions digitally and checking their answers using Natural Language Processing AI.</p>
                 <a href="#practice">
                     <button class="btn btn-purple">
@@ -20,55 +21,101 @@
 <div class="jumbotron container-fluid bg-white" id="practice">
     <div class="row align-items-center">
         <div class="col-sm-9 col-12 p-4">
-            <h1>Choose a <b class="text-purple">paper</b> you'd like to practice:</h1>
+            <h3>Choose paper</h3>
             <p>
-                <form action="/" method="get">
+                <form action="{% url 'practice' %}" method="get">
                     <div class="d-flex flex-row align-items-center my-2">
-                        <h4>Subject: </h4>
-                        <select class="form-select form-select-sm form-control">
-                            <option selected disabled>Open this select menu </option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <h5>Subject: </h5>
+                        <select required="true" class="form-select form-select-sm form-control" name="subject" id="subject">
+                            <option selected disabled value="">Select subject code</option>
+                            <option value="0610">Biology (0610)</option>
+                            <option value="0417">Information and Communication Technology (0417)</option>
+                            <option value="0478">Computer Science (0478)</option>
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
-                        <h4>Season/Month: </h4>
-                        <select class="form-select form-select-sm form-control">
-                            <option selected disabled>Open this select menu </option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <h5>Year: </h5>
+                        <select required class="form-select form-select-sm form-control" name="year" id="year">
+                            <option selected disabled value="">Select year</option>
+                            {% for i in '12345'|make_list %}
+                                <option value="{{ forloop.counter | addition:2017 }}">{{ forloop.counter | addition:2017 }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
-                        <h4>Year: </h4>
-                        <select class="form-select form-select-sm form-control">
-                            <option selected disabled>Open this select menu </option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <h5>Month: </h5>
+                        <select required class="form-select form-select-sm form-control" name="month" id="month">
+                            <option selected disabled value="">Select month</option>
+                            <option value="m">Feb/Mar</option>
+                            <option value="s">May/June</option>
+                            <option value="w">Oct/Nov</option>
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
-                        <h4>Variant: </h4>
-                        <select class="form-select form-select-sm form-control">
-                            <option selected disabled>Open this select menu </option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <h5>Variant: </h5>
+                        <select required class="form-select form-select-sm form-control" name="variant" id="variant">
+                            <option selected disabled value="">Select paper variant</option>
                         </select>
                     </div><br>
-                <button type="submit" class="btn btn-purple">
+                    <button id="submit" type="submit" class="btn btn-purple">
                         Practice paper
                     </button>
-                    <button type="button" class="btn btn-light border">
+                    <button id="clear" type="button" class="btn btn-light border">
                         Clear selection
                     </button>
                 </form>
+                <script>
+                    let subject = document.getElementById('subject');
+                    let year = document.getElementById('year');
+                    let month = document.getElementById('month');
+                    let variant = document.getElementById('variant');
+                    let clear = document.getElementById('clear');
+
+                    clearForm = () => {
+                        subject[0].selected = year[0].selected = month[0].selected = variant[0].selected = true;
+                        year.disabled = month.disabled = variant.disabled = true;
+                    };
+                    clear.addEventListener('click', clearForm);
+                    document.addEventListener('DOMContentLoaded', clearForm);
+                    
+
+                    year.disabled = month.disabled = variant.disabled = true;
+
+                    let variantList = ['11','12','13'];
+                    let march = false;
+                    subject.addEventListener('change', () => {
+                        console.log(subject.value);
+                        year.disabled = month.disabled = false;
+                        variantList.forEach((e, index) => {
+                            let newOption = document.createElement('option');
+                            if (subject.value === '0610') {
+                                variantList[index] = e.replace('1', '4');
+                            } else {
+                                variantList[index] = e.replace('4', '1');
+                            }
+                            newOption.innerHTML = newOption.value = variantList[index]
+                            variant.appendChild(newOption);
+                        })
+                        console.log(variantList);
+                    })
+                    month.addEventListener('change', () => {
+                        variant.disabled = false;
+                        console.log("amogus")
+                        if (month.value === 'm') {
+                            console.log(variant.firstChild)
+                            variant[2].selected = true;
+                            variant.getElementsByTagName('option')[1].hidden = true;
+                            variant.lastChild.hidden = true;
+                        } else {
+                            variant.getElementsByTagName('option')[1].hidden = false;
+                            variant.lastChild.hidden = false;
+                        }
+                    })
+                    
+                </script>
             </p>
         </div>
-        <img class="col-sm-3 col-6 p-2" src="{% static 'marker_web/random-img.png' %}">
+        <img class="col-sm-3 col-6 p-2" src="{% static 'marker_web/quill pic final.png' %}">
     </div>
 </div>
 {% endblock %}

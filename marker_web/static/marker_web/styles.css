@@ -3,7 +3,7 @@ html {
 }
 
 :root {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 body {
@@ -14,11 +14,11 @@ body {
   background-color: #604FA3;
 }
 
-.text-purple, h4 {
+.text-purple, h5 {
   color: #604FA3;
 }
 
-h4 {
+h5 {
   margin-right: 1rem;
   width: 20rem;
 }
@@ -55,6 +55,12 @@ select {
   color: white;
 }
 
+.jumbotron img {
+  border-radius: 50%;
+  border: #604FA3;
+  border-style: inset;
+}
+
 .navbar {
   position: sticky;
   top: 0;
@@ -63,9 +69,9 @@ select {
   z-index: 999;
 }
 
-.navbar-brand svg {
-  width: 10%;
-  fill: #604FA3;
+.navbar-brand img {
+  width: 4rem;
+  background-image: radial-gradient(ellipse at left bottom, #F6F0FE, #604FA3, #F6F0FE 50%);
 }
 
 .nav-link {
