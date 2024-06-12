@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse
-from .helpers import extractQP
+from .helpers import createPDFzip, extractQP
 
 import requests, tempfile, os
 
@@ -17,18 +17,26 @@ def about(request):
 
 def practice(request):
     # https://stackoverflow.com/questions/34503412/download-and-save-pdf-file-with-python-requests-module
-    filename = f"{request.GET['subject']}_{request.GET['month']}{request.GET['year'][2:4]}_qp_{request.GET['variant']}"
-    url = f"https://bestexamhelp.com/exam/cambridge-igcse/biology-0610/{request.GET['year']}/{filename}.pdf"
-    print(url)
-    r = requests.get(url, stream=True)
-    
-    # https://docs.python.org/3/library/tempfile.html
-    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as fd:
-        for chunk in r.iter_content(2000):
-            fd.write(chunk)
-        os.chmod(fd.name, 0o755)
-    extractQP(os.path.abspath(fd.name), fd.name)
-    return HttpResponse(os.path.getsize(os.path.abspath(fd.name)))
+    try:
+        filename = f"{request.GET['subject'].split('-')[-1]}_{request.GET['month']}{request.GET['year'][2:4]}_qp_{request.GET['variant']}"
+        url = f"https://bestexamhelp.com/exam/cambridge-igcse/{request.GET['subject']}/{request.GET['year']}/{filename}.pdf"
+        print(url)
+        r = requests.get(url, stream=True)
+        
+        # https://docs.python.org/3/library/tempfile.html
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as fd:
+            for chunk in r.iter_content(2000):
+                fd.write(chunk)
+            os.chmod(fd.name, 0o755)
+        print(tempfile.gettempdir()) 
+        createPDFzip(tempfile.gettempdir(), fd.name)
+        # Once you get the zip file, open the damn thing and show the contents on the webpage
+        questions = extractQP(os.path.join(tempfile.gettempdir(), fd.name + ".zip"))
+        return render(request, "marker_web/practice.html", {
+            "questions": questions
+        })
+    except:
+        return HttpResponse("file not found")
 
 def results(request):
     return render(request, "marker_web/results.html")

@@ -28,9 +28,8 @@
                         <h5>Subject: </h5>
                         <select required="true" class="form-select form-select-sm form-control" name="subject" id="subject">
                             <option selected disabled value="">Select subject code</option>
-                            <option value="0610">Biology (0610)</option>
-                            <option value="0417">Information and Communication Technology (0417)</option>
-                            <option value="0478">Computer Science (0478)</option>
+                            <option value="biology-0610">Biology (0610)</option>
+                            <option value="computer-science-0478">Computer Science (0478)</option>
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
@@ -57,12 +56,19 @@
                             <option selected disabled value="">Select paper variant</option>
                         </select>
                     </div><br>
-                    <button id="submit" type="submit" class="btn btn-purple">
-                        Practice paper
-                    </button>
-                    <button id="clear" type="button" class="btn btn-light border">
-                        Clear selection
-                    </button>
+                    <div id="submit-area" class="text-center">
+                        <button id="submit" type="submit" onclick=changeSA class="btn btn-purple">
+                            Practice paper
+                        </button>
+                        <button id="clear" type="button" class="btn btn-light border">
+                            Clear selection
+                        </button>
+                    </div>
+                    <div id="loading-area">
+                        <br>
+                        <div id="loading"></div>
+                        &nbsp; Loading
+                    </div>
                 </form>
                 <script>
                     let subject = document.getElementById('subject');
@@ -70,6 +76,7 @@
                     let month = document.getElementById('month');
                     let variant = document.getElementById('variant');
                     let clear = document.getElementById('clear');
+                    let submit = document.getElementById('submit');
 
                     clearForm = () => {
                         subject[0].selected = year[0].selected = month[0].selected = variant[0].selected = true;
@@ -78,14 +85,18 @@
                     clear.addEventListener('click', clearForm);
                     document.addEventListener('DOMContentLoaded', clearForm);
                     
+                    submit.addEventListener('click', () => {
+                        loadingArea.style.display = "flex";
+                        confirm.style.display = "none";
+                    });
 
                     year.disabled = month.disabled = variant.disabled = true;
 
                     let variantList = ['11','12','13'];
-                    let march = false;
                     subject.addEventListener('change', () => {
                         console.log(subject.value);
                         year.disabled = month.disabled = false;
+                        variant.innerHTML = `<option selected disabled value="">Select paper variant</option>`;
                         variantList.forEach((e, index) => {
                             let newOption = document.createElement('option');
                             if (subject.value === '0610') {
@@ -100,7 +111,6 @@
                     })
                     month.addEventListener('change', () => {
                         variant.disabled = false;
-                        console.log("amogus")
                         if (month.value === 'm') {
                             console.log(variant.firstChild)
                             variant[2].selected = true;
@@ -115,7 +125,7 @@
                 </script>
             </p>
         </div>
-        <img class="col-sm-3 col-6 p-2" src="{% static 'marker_web/quill pic final.png' %}">
+        <img class="col-sm-3 col-6 p-2 d-none d-sm-block" src="{% static 'marker_web/quill pic final.png' %}">
     </div>
 </div>
 {% endblock %}

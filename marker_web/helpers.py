@@ -8,7 +8,7 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-import logging, os
+import logging, os, csv, glob, re, zipfile, json
 from . import cred 
 from adobe.pdfservices.operation.auth.credentials import Credentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
@@ -23,10 +23,28 @@ from adobe.pdfservices.operation.pdfops.extract_pdf_operation import ExtractPDFO
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
-def extractQP(filepath, filename):
+# https://stackoverflow.com/questions/4623446/how-do-you-sort-files-numerically
+def tryint(s):
+    try:
+        return int(s)
+    except:
+        return s
+
+def alphanum_key(s):
+    """ Turn a string into a list of string and number chunks.
+        "z23a" -> ["z", 23, "a"]
+    """
+    return [ tryint(c) for c in re.split('([0-9]+)', s) ]
+
+def sort_nicely(l):
+    """ Sort the given list in the way that humans expect.
+    """
+    l.sort(key=alphanum_key)
+    
+def createPDFzip(filepath, filename):
     try:
         # get base path.
-        input_pdf = filepath
+        input_pdf = os.path.join(filepath, filename)
         print(input_pdf)
         print(os.path.getsize(input_pdf))
 
@@ -59,3 +77,24 @@ def extractQP(filepath, filename):
         result.save_as(f"{filename}.zip")
     except (ServiceApiException, ServiceUsageException, SdkException):
         logging.exception("Exception encountered while executing operation")
+        
+def extractQP(filepath):
+    archive = zipfile.ZipFile(filepath, 'r')
+    jsonentry = archive.open('structuredData.json')
+    jsondata = jsonentry.read()
+    data = json.loads(jsondata)
+    questions = []
+    question = []
+    index=1
+    for element in data["elements"]:
+        if "Text" in element:
+            element["Text"] = element["Text"].strip()
+            if len(element["Text"]) == 1 and element["Text"] == str(index):
+                if question != []:
+                    questions.append(question)
+                    question = []
+                index+=1
+            question.append(element["Text"])
+    questions.append(question)
+
+    return questions 
