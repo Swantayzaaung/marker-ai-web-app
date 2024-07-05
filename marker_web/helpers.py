@@ -46,35 +46,39 @@ def replace_blanks(array):
     blank_count = 0
     startIndex = -1
     
-    currentLetter = ""
-    currentNum = ""
+    question_no = array[0]
+    sub_question = ""
+    sub_index = ""
     
-    for i in range(len(array)):
-        # Add line breaks in front of section markers like 2 (a), (iii), etc
-        if array[i][0] == '(':
-            # Get the current number: e.g 4(a)(ii)
-            if re.match(r'\(([a-h])\)',array[i]):
-                currentLetter = f"{array[0]}{array[i]}"[0:4]
-                currentNum = currentLetter
-            else:
-                currentNum = currentLetter + array[i].split(' ')[0]
-            print("Current number is:", currentNum)
-            print("Array: ", array)
-            print()
-            array[i] = "<br>" + array[i]
-            
-        if re.search(r'\.{4,}', array[i]):
+    for i,s in enumerate(array):
+        
+        if re.search(r'\.{4,}', s):
             if startIndex == -1:
                 startIndex = i
             blank_count += 1
         else:
             if blank_count > 0:
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
-                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea placeholder="Enter answer for {currentNum}"></textarea><br>', combined_string)
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea>Enter answer for {question_no}{sub_question}{sub_index}</textarea><br>', combined_string)
                 output_arr.append(combined_string)
-            output_arr.append(array[i])
+            output_arr.append(s)
             blank_count = 0
             startIndex = -1
+            
+        # Get the current number: e.g 4(a)(ii), so that I can put this in the textarea input
+        if s[0] == '(':
+            if re.match(r'^\([a-h]\)', s):
+                # For sub questions
+                sub_question = s.split(' ')[0]
+                sub_index = ""
+            elif re.match(r'^\([ivx]+\)', s):
+                # For sub index like 1(a)(i)
+                sub_index = s.split(' ')[0]
+            print("Number is:", question_no + sub_question + sub_index)
+            print("s value is:", s)
+            print("Array is:", output_arr)
+            print()
+            
     return output_arr
 
 def createPDFzip(filepath, filename):
@@ -144,6 +148,15 @@ def extractQP(filepath):
 
     questions.append(replace_blanks(question))
     
+    # Add line breaks to text input boxes
+    for question in questions:
+        for i in range(len(question)):
+            if question[i][0] == '(':
+                question[i] = "<br>" + question[i]
+            elif question[i][-1] == ']':
+                question[i] = question[i] + "<br>"
+        print("Question is:",question)
+        
     # Remove any stuff that comes after the last question ends (e.g BLANK PAGE texts)
     lastIndex = 0
     for item in questions[-1]:

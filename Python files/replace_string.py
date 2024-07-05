@@ -9,33 +9,12 @@ def merge_blanks(array):
     blank_count = 0
     startIndex = -1
     
-    question_no = ""
+    question_no = array[0]
     sub_question = ""
     sub_index = ""
     
     for i,s in enumerate(array):
-        # Get the current number: e.g 4(a)(ii)
-        if re.match(r'^\d+')', s):
-            # For question numbers
-            question_no = s
-            sub_question = ""
-            sub_index = ""
-            result_array.append(s)
-        elif re.match(r'^\([a-z]\)$', s):
-            # For sub questions
         
-            
-        else:
-            currentNum = currentLetter + s.split(' ')[0]
-            
-        print("Current number is:", currentNum)
-        print("i is pointing to:", s)
-        print("Array: ", output_arr)
-        print()
-        
-        # Add line breaks in front of section markers like (a), (iii), etc
-        #s = "<br>" + s
-            
         if re.search(r'\.{4,}', s):
             if startIndex == -1:
                 startIndex = i
@@ -43,11 +22,29 @@ def merge_blanks(array):
         else:
             if blank_count > 0:
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
-                combined_string = re.sub(r'(\.{4,}\s*)+', f'[________Enter answer for {currentNum}________]', combined_string)
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'[________Enter answer for {question_no}{sub_question}{sub_index}________]', combined_string)
                 output_arr.append(combined_string)
             output_arr.append(s)
             blank_count = 0
             startIndex = -1
+            
+        # Get the current number: e.g 4(a)(ii)
+        if s[0] == '(':
+            # Add line breaks in front of section markers like (a), (iii), etc
+            #s = "<br>" + s
+            if re.match(r'^\([a-h]\)', s):
+                # For sub questions
+                sub_question = s[0:4]
+                sub_index = ""
+            elif re.match(r'^\([ivx]+\)', s):
+                # For sub index like 1(a)(i)
+                sub_index = s[0:4]
+            print("Number is:", question_no + sub_question + sub_index)
+            print("s value is:", s)
+            print("Array is:", output_arr)
+            print()
+            
+        
     return output_arr
 
 print(input_arr)
