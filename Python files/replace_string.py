@@ -9,25 +9,34 @@ def merge_blanks(array):
     blank_count = 0
     startIndex = -1
     
-    currentLetter = ""
-    currentNum = ""
+    question_no = ""
+    sub_question = ""
+    sub_index = ""
     
-    for i in range(len(array)):
-        # Add line breaks in front of section markers like (a), (iii), etc
-        if array[i][0] == '(':
-            # Get the current number: e.g 4(a)(ii)
-            if re.match(r'\(([a-h])\)',array[i]):
-                currentLetter = f"{array[0]}{array[i]}"[0:4]
-                currentNum = currentLetter
-            else:
-                currentNum = currentLetter + array[i].split(' ')[0]
-            print("Current number is:", currentNum)
-            print("i is pointing to:", array[i])
-            print("Array: ", output_arr)
-            print()
-            array[i] = "" + array[i]
+    for i,s in enumerate(array):
+        # Get the current number: e.g 4(a)(ii)
+        if re.match(r'^\d+')', s):
+            # For question numbers
+            question_no = s
+            sub_question = ""
+            sub_index = ""
+            result_array.append(s)
+        elif re.match(r'^\([a-z]\)$', s):
+            # For sub questions
+        
             
-        if re.search(r'\.{4,}', array[i]):
+        else:
+            currentNum = currentLetter + s.split(' ')[0]
+            
+        print("Current number is:", currentNum)
+        print("i is pointing to:", s)
+        print("Array: ", output_arr)
+        print()
+        
+        # Add line breaks in front of section markers like (a), (iii), etc
+        #s = "<br>" + s
+            
+        if re.search(r'\.{4,}', s):
             if startIndex == -1:
                 startIndex = i
             blank_count += 1
@@ -36,7 +45,7 @@ def merge_blanks(array):
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
                 combined_string = re.sub(r'(\.{4,}\s*)+', f'[________Enter answer for {currentNum}________]', combined_string)
                 output_arr.append(combined_string)
-            output_arr.append(array[i])
+            output_arr.append(s)
             blank_count = 0
             startIndex = -1
     return output_arr
