@@ -3,7 +3,9 @@ import csv
 import glob
 from helpers import sort_nicely
 
-filepath = "./output/bio ms csv/tables/"
+# Open a folder in a zip file: https://stackoverflow.com/questions/25817648/opening-folders-in-zip-files-python 
+
+filepath = "./output/0610_s19_ms_43/tables/"
 csv_files = glob.glob(filepath + "*.csv")
 sort_nicely(csv_files)
 
@@ -32,7 +34,7 @@ for file in csv_files:
                         combined_data.append(nextRow)                   
                 except:
                     combined_data.append(row)                   
-    
+
 for row in combined_data:
     # row.pop()
     print(row)

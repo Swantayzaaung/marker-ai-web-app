@@ -4,7 +4,15 @@
 {% block body %}
     {% for question in questions %}
         <div class="jumbotron container-fluid bg-white">
-            {{ question }}
+            <!-- <h5>Question {{ question.0 }}</h5>
+            {{ question.1 }}
+            <br><hr> -->
+            {% for item in question %}
+                {{ item | safe}}
+            {% endfor %}
+            <!-- <hr> -->
+            <!-- {{ question }} -->
+
         </div>
     {% endfor %}
 {% endblock %}

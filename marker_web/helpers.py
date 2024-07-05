@@ -40,7 +40,43 @@ def sort_nicely(l):
     """ Sort the given list in the way that humans expect.
     """
     l.sort(key=alphanum_key)
+
+def replace_blanks(array):
+    output_arr = []
+    blank_count = 0
+    startIndex = -1
     
+    currentLetter = ""
+    currentNum = ""
+    
+    for i in range(len(array)):
+        # Add line breaks in front of section markers like 2 (a), (iii), etc
+        if array[i][0] == '(':
+            # Get the current number: e.g 4(a)(ii)
+            if re.match(r'\(([a-h])\)',array[i]):
+                currentLetter = f"{array[0]}{array[i]}"[0:4]
+                currentNum = currentLetter
+            else:
+                currentNum = currentLetter + array[i].split(' ')[0]
+            print("Current number is:", currentNum)
+            print("Array: ", array)
+            print()
+            array[i] = "<br>" + array[i]
+            
+        if re.search(r'\.{4,}', array[i]):
+            if startIndex == -1:
+                startIndex = i
+            blank_count += 1
+        else:
+            if blank_count > 0:
+                combined_string = ''.join(array[startIndex:startIndex+blank_count])
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea placeholder="Enter answer for {currentNum}"></textarea><br>', combined_string)
+                output_arr.append(combined_string)
+            output_arr.append(array[i])
+            blank_count = 0
+            startIndex = -1
+    return output_arr
+
 def createPDFzip(filepath, filename):
     try:
         # get base path.
@@ -86,15 +122,76 @@ def extractQP(filepath):
     questions = []
     question = []
     index=1
-    for element in data["elements"]:
-        if "Text" in element:
-            element["Text"] = element["Text"].strip()
-            if len(element["Text"]) == 1 and element["Text"] == str(index):
-                if question != []:
-                    questions.append(question)
-                    question = []
-                index+=1
-            question.append(element["Text"])
-    questions.append(question)
+    currentNum = ""
+    for i in range(len(data["elements"])):
+        if 'Text' in data['elements'][i]:
+            currentText = data['elements'][i]["Text"].strip()
+            try:
+                nextText = data["elements"][i+1]["Text"].strip()
+            except:
+                nextText = ""
 
-    return questions 
+            # Split the text up into different question numbers
+            if len(currentText) == 1:
+                if nextText.strip()[0] != '.':
+                    if currentText == str(index):
+                        index+=1
+                        if question != []:
+                            questions.append(replace_blanks(question))
+                            question = []
+                           
+            question.append(currentText)
+
+    questions.append(replace_blanks(question))
+    
+    # Remove any stuff that comes after the last question ends (e.g BLANK PAGE texts)
+    lastIndex = 0
+    for item in questions[-1]:
+        if ']' in item:
+            lastIndex = questions[-1].index(item) + 1
+    questions[-1][lastIndex:] = [""] * (len(questions[-1]) - lastIndex)
+
+    return questions
+
+# def isSubNumber(element):
+#     if element.
+
+def extractMS():
+    # https://johnvastola.medium.com/how-to-combine-multiple-csv-files-using-python-to-analyze-797fc825c541
+
+    filepath = "./output/bio ms csv/tables/"
+    csv_files = glob.glob(filepath + "*.csv")
+    sort_nicely(csv_files)
+
+    # Use a wildcard pattern to match all CSV files in the directory
+    # Initialize an empty list to store rows from each file
+    combined_data = []
+    tableQ = []
+    # Read and append rows from each CSV file to the combined_data list
+    for file in csv_files:
+        with open(file, 'r', encoding="utf-8-sig") as csvfile:
+            reader = csv.reader(csvfile)
+            header = next(reader)
+            # print(header)
+            if 'Question' in header[0]:
+                if not combined_data:  # Include header only once
+                    combined_data.append(list(filter(None, header)))
+                # combined_data.extend(row for row in reader)
+                for row in reader:
+                    try:
+                        nextRow = next(reader)
+                        if nextRow[0] == '':
+                            tableQ.append(row)
+                            tableQ.append(nextRow)     
+                        else:
+                            combined_data.append(row)                   
+                            combined_data.append(nextRow)                   
+                    except:
+                        combined_data.append(row)                   
+        
+    for row in combined_data:
+        # row.pop()
+        print(row)
+        
+    for row in tableQ:
+        print(row)

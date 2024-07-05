@@ -18,7 +18,7 @@
         </div>
     </div>
 </div>
-<div class="jumbotron container-fluid bg-white" id="practice">
+<div class="p-4 container-fluid bg-white" id="practice">
     <div class="row align-items-center">
         <div class="col-sm-9 col-12 p-4">
             <h3>Choose paper</h3>
@@ -27,7 +27,7 @@
                     <div class="d-flex flex-row align-items-center my-2">
                         <h5>Subject: </h5>
                         <select required="true" class="form-select form-select-sm form-control" name="subject" id="subject">
-                            <option selected disabled value="">Select subject code</option>
+                            <option selected disabled value="">Subject code</option>
                             <option value="biology-0610">Biology (0610)</option>
                             <option value="computer-science-0478">Computer Science (0478)</option>
                         </select>
@@ -35,7 +35,7 @@
                     <div class="d-flex flex-row align-items-center my-2">
                         <h5>Year: </h5>
                         <select required class="form-select form-select-sm form-control" name="year" id="year">
-                            <option selected disabled value="">Select year</option>
+                            <option selected disabled value="">Year</option>
                             {% for i in '12345'|make_list %}
                                 <option value="{{ forloop.counter | addition:2017 }}">{{ forloop.counter | addition:2017 }}</option>
                             {% endfor %}
@@ -44,7 +44,7 @@
                     <div class="d-flex flex-row align-items-center my-2">
                         <h5>Month: </h5>
                         <select required class="form-select form-select-sm form-control" name="month" id="month">
-                            <option selected disabled value="">Select month</option>
+                            <option selected disabled value="">Month</option>
                             <option value="m">Feb/Mar</option>
                             <option value="s">May/June</option>
                             <option value="w">Oct/Nov</option>
@@ -53,30 +53,34 @@
                     <div class="d-flex flex-row align-items-center my-2">
                         <h5>Variant: </h5>
                         <select required class="form-select form-select-sm form-control" name="variant" id="variant">
-                            <option selected disabled value="">Select paper variant</option>
+                            <option selected disabled value="">Variant</option>
                         </select>
                     </div><br>
                     <div id="submit-area" class="text-center">
-                        <button id="submit" type="submit" onclick=changeSA class="btn btn-purple">
+                        <button id="submit" type="submit" class="btn btn-purple">
                             Practice paper
                         </button>
                         <button id="clear" type="button" class="btn btn-light border">
                             Clear selection
                         </button>
                     </div>
-                    <div id="loading-area">
+                    <div id="loading-area" class="text-center justify-content-center align-items-center">
                         <br>
                         <div id="loading"></div>
                         &nbsp; Loading
                     </div>
                 </form>
                 <script>
+                    let form = document.querySelector('form');
                     let subject = document.getElementById('subject');
                     let year = document.getElementById('year');
                     let month = document.getElementById('month');
                     let variant = document.getElementById('variant');
                     let clear = document.getElementById('clear');
-                    let submit = document.getElementById('submit');
+                    let loadingArea = document.getElementById('loading-area');
+                    let submitArea = document.getElementById('submit-area');
+                    loadingArea.style.display = 'none';
+                    // submit.disabled = !cansubmit;
 
                     clearForm = () => {
                         subject[0].selected = year[0].selected = month[0].selected = variant[0].selected = true;
@@ -85,10 +89,10 @@
                     clear.addEventListener('click', clearForm);
                     document.addEventListener('DOMContentLoaded', clearForm);
                     
-                    submit.addEventListener('click', () => {
+                    form.onsubmit = () => {
                         loadingArea.style.display = "flex";
-                        confirm.style.display = "none";
-                    });
+                        submitArea.style.display = "none";
+                    }
 
                     year.disabled = month.disabled = variant.disabled = true;
 
@@ -121,7 +125,6 @@
                             variant.lastChild.hidden = false;
                         }
                     })
-                    
                 </script>
             </p>
         </div>
