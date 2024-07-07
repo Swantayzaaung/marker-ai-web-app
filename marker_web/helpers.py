@@ -74,10 +74,6 @@ def replace_blanks(array):
             elif re.match(r'^\([ivx]+\)', s):
                 # For sub index like 1(a)(i)
                 sub_index = s.split(' ')[0]
-            print("Number is:", question_no + sub_question + sub_index)
-            print("s value is:", s)
-            print("Array is:", output_arr)
-            print()
             
     return output_arr
 
@@ -137,17 +133,18 @@ def extractQP(filepath):
 
             # Split the text up into different question numbers
             if len(currentText) == 1:
-                if nextText.strip()[0] != '.':
-                    if currentText == str(index):
-                        index+=1
-                        if question != []:
-                            questions.append(replace_blanks(question))
-                            question = []
-                           
+                if nextText != "":
+                    if nextText.strip()[0] != '.':
+                        if currentText == str(index):
+                            index+=1
+                            if question != []:
+                                questions.append(replace_blanks(question)[1:])
+                                question = []
+            print("current text is:", currentText)
             question.append(currentText)
 
-    questions.append(replace_blanks(question))
-    
+    questions.append(replace_blanks(question)[1:])
+    print(questions)
     # Add line breaks to text input boxes
     for question in questions:
         for i in range(len(question)):
@@ -155,7 +152,6 @@ def extractQP(filepath):
                 question[i] = "<br>" + question[i]
             elif question[i][-1] == ']':
                 question[i] = question[i] + "<br>"
-        print("Question is:",question)
         
     # Remove any stuff that comes after the last question ends (e.g BLANK PAGE texts)
     lastIndex = 0
@@ -185,7 +181,6 @@ def extractMS():
         with open(file, 'r', encoding="utf-8-sig") as csvfile:
             reader = csv.reader(csvfile)
             header = next(reader)
-            # print(header)
             if 'Question' in header[0]:
                 if not combined_data:  # Include header only once
                     combined_data.append(list(filter(None, header)))

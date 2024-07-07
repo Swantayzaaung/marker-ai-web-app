@@ -103,7 +103,7 @@
                         variant.innerHTML = `<option selected disabled value="">Select paper variant</option>`;
                         variantList.forEach((e, index) => {
                             let newOption = document.createElement('option');
-                            if (subject.value === '0610') {
+                            if (subject.value === 'biology-0610') {
                                 variantList[index] = e.replace('1', '4');
                             } else {
                                 variantList[index] = e.replace('4', '1');

@@ -2,11 +2,13 @@
 {% load static %}
 {% block title %}Practice{% endblock %}
 {% block body %}
+    <form action="{% url 'practice' %}" method="post">
     {% for question in questions %}
         <div class="jumbotron container-fluid bg-white">
             <!-- <h5>Question {{ question.0 }}</h5>
             {{ question.1 }}
             <br><hr> -->
+            <h2 class="text-purple">Question {{ forloop.counter }}</h2>
             {% for item in question %}
                 {{ item | safe}}
             {% endfor %}
@@ -15,4 +17,6 @@
 
         </div>
     {% endfor %}
+        <button type="submit" class="btn btn-purple">Submit answer</button>
+    </form>
 {% endblock %}
