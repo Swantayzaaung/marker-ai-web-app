@@ -1,0 +1,12 @@
+﻿ ;  ,separates marking points  
+ /  ,alternatives  
+ I  , ignore  
+ R  , reject  
+ A  ,"accept (for answers correctly cued by the question, or guidance for examiners)  "
+ AW  ,alternative wording (where responses vary more than usual)  
+ AVP  ,any valid point  
+ ecf  ,credit a correct statement /calculation that follows a previous wrong response  
+ ora  ,or reverse argument  
+ ( )  ,"the word / phrase in brackets is not required, but sets the context  "
+ underline  ,actual word given must be used by candidate (grammatical variants excepted)  
+ max  ,indicates the maximum number of marks that can be given  

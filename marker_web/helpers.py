@@ -8,7 +8,8 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-import logging, os, csv, glob, re, zipfile, json
+import logging, os, csv, glob, re, zipfile, json, io
+# https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 from . import cred 
 from adobe.pdfservices.operation.auth.credentials import Credentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
@@ -59,7 +60,7 @@ def replace_blanks(array):
         else:
             if blank_count > 0:
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
-                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea>Enter answer for {question_no}{sub_question}{sub_index}</textarea><br>', combined_string)
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
                 output_arr.append(combined_string)
             output_arr.append(s)
             blank_count = 0
@@ -74,15 +75,19 @@ def replace_blanks(array):
             elif re.match(r'^\([ivx]+\)', s):
                 # For sub index like 1(a)(i)
                 sub_index = s.split(' ')[0]
+                
+    if blank_count > 0:
+        combined_string = ''.join(array[startIndex:startIndex+blank_count])
+        combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
+        output_arr.append(combined_string)   
             
     return output_arr
 
+# Credit: https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 def createPDFzip(filepath, filename):
     try:
         # get base path.
         input_pdf = os.path.join(filepath, filename)
-        print(input_pdf)
-        print(os.path.getsize(input_pdf))
 
         # Initial setup, create credentials instance.
         credentials = Credentials.service_principal_credentials_builder(). \
@@ -132,27 +137,28 @@ def extractQP(filepath):
                 nextText = ""
 
             # Split the text up into different question numbers
-            if len(currentText) == 1:
+            if len(currentText) == 1 or currentText.split(" ")[0] == str(index):
                 if nextText != "":
                     if nextText.strip()[0] != '.':
                         if currentText == str(index):
                             index+=1
                             if question != []:
                                 questions.append(replace_blanks(question)[1:])
+                                # questions.append(question)
                                 question = []
-            print("current text is:", currentText)
             question.append(currentText)
 
     questions.append(replace_blanks(question)[1:])
-    print(questions)
-    # Add line breaks to text input boxes
+    # questions.append(question)
+
+    # Add line breaks to text input boxes and single words
     for question in questions:
         for i in range(len(question)):
             if question[i][0] == '(':
                 question[i] = "<br>" + question[i]
             elif question[i][-1] == ']':
                 question[i] = question[i] + "<br>"
-        
+
     # Remove any stuff that comes after the last question ends (e.g BLANK PAGE texts)
     lastIndex = 0
     for item in questions[-1]:
@@ -165,11 +171,11 @@ def extractQP(filepath):
 # def isSubNumber(element):
 #     if element.
 
-def extractMS():
-    # https://johnvastola.medium.com/how-to-combine-multiple-csv-files-using-python-to-analyze-797fc825c541
-
-    filepath = "./output/bio ms csv/tables/"
-    csv_files = glob.glob(filepath + "*.csv")
+def extractMS(filepath):
+    # Credit: https://johnvastola.medium.com/how-to-combine-multiple-csv-files-using-python-to-analyze-797fc825c541
+    archive = zipfile.ZipFile(filepath, 'r')
+    all_files = archive.namelist()
+    csv_files = [file for file in all_files if file.endswith('.csv')]
     sort_nicely(csv_files)
 
     # Use a wildcard pattern to match all CSV files in the directory
@@ -178,28 +184,28 @@ def extractMS():
     tableQ = []
     # Read and append rows from each CSV file to the combined_data list
     for file in csv_files:
-        with open(file, 'r', encoding="utf-8-sig") as csvfile:
-            reader = csv.reader(csvfile)
+        with archive.open(file) as csvfile:
+            text = io.TextIOWrapper(csvfile, encoding='utf-8-sig')
+            reader = csv.reader(text)
             header = next(reader)
             if 'Question' in header[0]:
                 if not combined_data:  # Include header only once
                     combined_data.append(list(filter(None, header)))
                 # combined_data.extend(row for row in reader)
                 for row in reader:
+                    currentRow = [item.strip() for item in row]
                     try:
-                        nextRow = next(reader)
+                        nextRow = [item.strip() for item in next(reader)]
                         if nextRow[0] == '':
-                            tableQ.append(row)
+                            tableQ.append(currentRow)
                             tableQ.append(nextRow)     
                         else:
-                            combined_data.append(row)                   
+                            combined_data.append(currentRow)                   
                             combined_data.append(nextRow)                   
                     except:
-                        combined_data.append(row)                   
+                        combined_data.append(currentRow)                   
         
-    for row in combined_data:
-        # row.pop()
-        print(row)
-        
-    for row in tableQ:
-        print(row)
+    # for x in combined_data:
+    #     array = x
+    #     print(array[1])
+    return combined_data, tableQ

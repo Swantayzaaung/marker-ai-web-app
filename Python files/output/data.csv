@@ -1,0 +1,259 @@
+Cambridge Assessment International Education,
+Cambridge International General Certificate of Secondary Education,
+COMPUTER SCIENCE,0478/12
+Paper 1,March 2018
+MARK SCHEME,
+Maximum Mark: 75,
+Published,
+"This mark scheme is published as an aid to teachers and candidates, to indicate the requirements of the",
+examination. It shows the basis on which Examiners were instructed to award marks. It does not indicate the,
+"details of the discussions that took place at an Examiners’ meeting before marking began, which would have",
+considered the acceptability of alternative answers.,
+Mark schemes should be read in conjunction with the question paper and the Principal Examiner Report for,
+Teachers.,
+Cambridge International will not enter into discussions about these mark schemes.,
+Cambridge International is publishing the mark schemes for the March 2018 series for most,
+"Cambridge IGCSE® , Cambridge International A and AS Level components and some Cambridge O Level
+components.",
+® IGCSE is a registered trademark.,
+"This syllabus is approved for use in England, Wales and Northern Ireland as a Cambridge International Level 1/Level 2 Certificate.",
+This document consists of 11 printed pages.,
+© UCLES 2018 [Turn over,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,March 2018
+,PUBLISHED,
+,Generic Marking Principles,
+These general marking principles must be applied by all examiners when marking candidate answers. They should be applied alongside the,,
+specific content of the mark scheme or generic level descriptors for a question. Each question paper and mark scheme will also comply with these,,
+marking principles.,,
+"GENERIC MARKING PRINCIPLE 1:
+Marks must be awarded in line with:
+• the specific content of the mark scheme or the generic level descriptors for the question
+• the specific skills defined in the mark scheme or in the generic level descriptors for the question
+• the standard of response required by a candidate as exemplified by the standardisation scripts.",,
+GENERIC MARKING PRINCIPLE 2:,,
+"Marks awarded are always whole marks (not half marks, or other fractions).",,
+GENERIC MARKING PRINCIPLE 3:,,
+Marks must be awarded positively:,,
+•,"marks are awarded for correct/valid answers, as defined in the mark scheme. However, credit is given for valid answers which go beyond the",
+,"scope of the syllabus and mark scheme, referring to your Team Leader as appropriate",
+•,marks are awarded when candidates clearly demonstrate what they know and can do,
+•,marks are not deducted for errors,
+•,marks are not deducted for omissions,
+•,"answers should only be judged on the quality of spelling, punctuation and grammar when these features are specifically assessed by the",
+,"question as indicated by the mark scheme. The meaning, however, should be unambiguous.",
+GENERIC MARKING PRINCIPLE 4:,,
+Rules must be applied consistently e.g. in situations where candidates have not followed instructions or in the application of generic level,,
+descriptors.,,
+© UCLES 2018 Page 2 of 11,,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,March 2018
+,PUBLISHED,
+"GENERIC MARKING PRINCIPLE 5:
+Marks should be awarded using the full range of marks defined in the mark scheme for the question (however; the use of the full mark range may
+be limited according to the quality of the candidate responses seen).",,
+GENERIC MARKING PRINCIPLE 6:,,
+Marks awarded are based solely on the requirements as defined in the mark scheme. Marks should not be awarded with grade thresholds or,,
+grade descriptors in mind.,,
+© UCLES 2018 Page 3 of 11,,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,,March 2018
+,PUBLISHED,,
+Question,,Answer,Marks
+1,Description,Type of software,2
+,Free to download,,
+,,Free software,
+,Code can be modified,,
+,and redistributed,,
+,,Freeware,
+,Subject to copyright,,
+,legislation,,
+,1 mark for each ‘Type of software’ if correct lines are attached to it.,,
+Question,,Answer,Marks
+2(a),Any three from:,,3
+,Scans files for viruses // detects/identifies a virus,,
+,Can constantly run in background,,
+,Can run a scheduled scan,,
+,Can automatically updating virus definitions,,
+,Can quarantine a virus,,
+,Can delete a virus,,
+,Completes heuristic checking,,
+,Notifies user of a possible virus,,
+© UCLES 2018 Page 4 of 11,,,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,March 2018
+,PUBLISHED,
+Question,Answer,Marks
+2(b),Any three from:,3
+,Use a firewall,
+,Use of a proxy server,
+,Do not use / download software / files from unknown sources,
+,Do not share external storage devices / USB pens,
+,Do not open / take care when opening attachments / link,
+,Do not connect computer to network / use as stand-alone computer,
+,Limiting access to the computer,
+Question,Answer,Marks
+3(a),Byte 3 / 10110100,1
+3(b),Odd parity used,3
+,Counted / added the number 1’s // Most Bytes have an odd number of 1’s,
+,Byte 3 has an even number of 1’s // Byte 3 didn’t follow odd parity,
+Question,Answer,Marks
+4,Any six from:,6
+,Sensor(s) send data/signals to the microprocessor,
+,Analogue signal/data from sensor is converted to digital (using ADC),
+,Microprocessor compares data value against set boundaries / pre-set data,
+,If value between 21 and 24,
+,no action taken,
+,If value > 24 °C / signal is sent from microprocessor,
+,to turn conditioning unit ON//Set to cold,
+,If value is < 21 °C signal is sent from microprocessor,
+,to turn conditioning unit ON//Set to warm,
+,Process is repeated for a continuous operation,
+© UCLES 2018,Page 5 of 11,
+
+0478/ 12,,Cambridge IGCSE – Mark Scheme,,March 2018
+,,PUBLISHED,,
+Question,,Answer,,Marks
+5(a),One mark for each correct Hexadecimal value,,,3
+,C4,10,FE,09
+5(b),"Any two from:
+Easier / simpler to remember / write down // quicker to transcribe
+Less likely to make error
+Less digits to use",,,2
+Question,,Answer,,Marks
+6,1 mark for suitable example and 1 mark for suitable associated use.,,,6
+,Primary,RAM,,
+,,stores OS when running / data currently in use / instructions currently in use,,
+,,ROM,,
+,,stores boot instructions / BIOS,,
+,,Cache,,
+,,stores frequently used instructions,,
+,Secondary,HDD / SSD,,
+,,stores files / applications (by example),,
+,Offline,CD/DVD/Blu-ray/Flash Memory/USB stick/Removable HDD/Removable SSD,,
+,,stores files / applications (by example),,
+© UCLES 2018 Page 6 of 11,,,,
+
+0478/ 12,,Cambridge IGCSE – Mark Scheme,,,March 2018
+,,PUBLISHED,,,
+Question,,,,Answer,Marks
+7(a),4 marks for 8 correct outputs,,,,4
+,3 marks for 6 correct outputs,,,,
+,2 marks for 4 correct outputs,,,,
+,1 mark for 2 correct outputs,,,,
+,A,B,C,X,
+,0,0,0,1,
+,0,0,1,0,
+,0,1,0,1,
+,0,1,1,1,
+,1,0,0,0,
+,1,0,1,1,
+,1,1,0,1,
+,1,1,1,1,
+7(b),1 mark per gate in correct location,,,,6
+© UCLES 2018,,,Page 7 of 11,,
+
+0478/ 12,,Cambridge IGCSE – Mark Scheme,,,,March 2018
+,,PUBLISHED,,,,
+Question,,,,,Answer,Marks
+7(c),4 marks for 8 correct outputs,,,,,4
+,3 marks for 6 correct outputs,,,,,
+,2 marks for 4 correct outputs,,,,,
+,1 mark for 2 correct outputs,,,,,
+,A,B,C,X,,
+,0,0,0,0,,
+,0,0,1,0,,
+,0,1,0,1,,
+,0,1,1,1,,
+,1,0,0,0,,
+,1,0,1,0,,
+,1,1,0,0,,
+,1,1,1,0,,
+Question,,,,,Answer,Marks
+8(a),Descriptions,,,Serial,"Method
+Parallel",3
+,"Multiple bits are sent and received at
+the same time.",,,,3,[1]
+,"Bits are sent one at a time in a single
+direction.",,,3,,[1]
+,"Bits are sent using a single wire. Data
+can be sent or received, but not at the
+same time.",,,3,,[1]
+© UCLES 2018 Page 8 of 11,,,,,,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,,,,March 2018
+,PUBLISHED,,,,
+Question,,,Answer,,Marks
+8(b),Descriptions,Simplex,"Type
+Half-duplex",Duplex,3
+,"Multiple bits are sent and received at
+the same time.",,,3,[1]
+,"Bits are sent one at a time in a single
+direction.",3,,,[1]
+,"Bits are sent using a single wire. Data
+can be sent or received, but not at the
+same time.",,3,,[1]
+Question,Answer,,,,Marks
+9,Max 3 – 1 mark for correct answer and 2 marks for correct calculations.,,,,3
+,Any two from:,,,,
+,16000 × 32,,,,
+,512000 / 1024,,,,
+,Or,,,,
+,16000 × 8,,,,
+,128000 × 32,,,,
+,4096000 / 8,,,,
+,512000 / 1024,,,,
+,Correct answer:,,,,
+,500 kB,,,,
+© UCLES 2018,Page 9 of 11,,,,
+
+0478/ 12,Cambridge IGCSE – Mark Scheme,March 2018
+,PUBLISHED,
+Question,Answer,Marks
+10(a)(i),10010,1
+10(a)(ii),11110001,1
+10(b),Any four from:,4
+,The program is stored on a secondary storage device,
+,Data and instructions are moved to memory / RAM,
+,Data and instructions are stored in the same memory / RAM,
+,Data and instructions are moved to registers to be executed,
+,Instructions are fetched one at a time,
+Question,Answer,Marks
+11(a),Smaller file size reduces download / display time // reduces upload time,1
+11(b),Any four from:,4
+,A compression algorithm is used,
+,Permanently deleting some data // file cannot be restored to original,
+,Colour depth / palette can be reduced,
+,Resolution can be reduced // number of pixels can be reduced,
+,Less bits will be required for each pixel / colour,
+Question,Answer,Marks
+12(a),Quicker to scan,4
+,rather than type into a system,
+,Fewer errors,
+,no human input,
+© UCLES 2018 Page 10 of 11,,
+
+0478/ 12,,Cambridge IGCSE – Mark Scheme,March 2018
+,,PUBLISHED,
+Question,,Answer,Marks
+12(b),Any four from:,,4
+,Uses a barcode reader / scanner,,
+,Reader shines light / red laser at barcode,,
+,White lines reflect (more) light,,
+,Sensors / photoelectric cells detect light reflected back,,
+,Different reflections / bars will convert to different binary values,,
+Question,,Answer,Marks
+13,Any four from,,4
+,•,(Provides an) interface,
+,•,Loads / opens / installs / closes software,
+,•,Manages the hardware // manages peripherals // spooling,
+,•,Manages the transfer of programs into and out of memory,
+,•,Divides processing time // processor management,
+,•,Manages file handling,
+,•,Manages error handling / interrupts,
+,•,Manages security software,
+,•,Manages utility software,
+,•,Manages user accounts,
+,•,Multitasking // Multiprocessing // Multiprogramming // Time slicing,
+,•,Batch processing // real time processing,
+© UCLES 2018 Page 11 of 11,,,

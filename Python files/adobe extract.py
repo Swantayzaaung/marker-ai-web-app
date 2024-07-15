@@ -26,7 +26,7 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 try:
     # get base path.
-    filename = "0610_s19_ms_43"
+    filename = "0478_m18_ms_12"
     input_pdf = f"./input/{filename}.pdf"
 
     # Initial setup, create credentials instance.

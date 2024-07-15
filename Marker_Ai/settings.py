@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'marker_web',
+    'compare',
     'mathfilters',
     'django.contrib.admin',
     'django.contrib.auth',
