@@ -1,3 +1,7 @@
 marker_web/cred.py
 ./__pycache__
 ./*/__pycache__
+Python\ files/input/*
+Python\ files/output/*
+marker_web/*.zip
+marker_web/*.pdf
