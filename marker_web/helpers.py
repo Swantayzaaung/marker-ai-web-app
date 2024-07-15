@@ -8,9 +8,10 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np
+import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np, math, textwrap
 # https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 from . import cred 
+from compare.startup import nlp
 from adobe.pdfservices.operation.auth.credentials import Credentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
 from adobe.pdfservices.operation.pdfops.options.extractpdf.extract_pdf_options import ExtractPDFOptions
@@ -41,6 +42,13 @@ def sort_nicely(l):
     """ Sort the given list in the way that humans expect.
     """
     l.sort(key=alphanum_key)
+
+# Divide string into n equal sized segments
+
+def split_string(string, parts):
+    sub_len = math.ceil(len(string)/parts)
+    result = textwrap.wrap(string, sub_len)
+    return result
 
 def replace_blanks(array):
     output_arr = []

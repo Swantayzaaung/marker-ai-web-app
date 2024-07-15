@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse
-from .helpers import createPDFzip, extractQP, extractMS
+from .helpers import createPDFzip, extractQP, extractMS, split_string, mark_per_point
+from compare.startup import nlp
 
 import requests, tempfile, os
 
@@ -56,10 +57,28 @@ def practice(request):
             question = [row for row in normalQ if row[0] == key]
             if len(question) > 0:
                 array.append(question)
+                #print(question[0][1], end="")
+                max_marks = -1
                 if len(question[0]) > 2:
-                    print(question[0][-1])
+                    if not question[0][2]:
+                        max_marks = 2
+                    else:
+                        max_marks = int(question[0][2])
                 else:
-                    print("smth else")
+                    max_marks = 2
+                print(max_marks)
+                mark_scheme_points = question[0][1].split(';')
+                print(mark_scheme_points)
+                student_response = request.POST[key]
+                student_response_by_point = student_response.split('.')
+
+                indexes_not_allowed = [] # passed by ref
+                marks = 0
+                for point in student_response_by_point:
+                    marks += mark_per_point(point, mark_scheme_points, indexes_not_allowed)
+                    if marks >= max_marks:
+                        break
+                print("Total marks: {}".format(marks))
 
             # if len(question[0]) > 0:
             #     print(f"Question is {question[0][1]}\n")
