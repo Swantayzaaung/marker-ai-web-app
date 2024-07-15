@@ -8,7 +8,7 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-import logging, os, csv, glob, re, zipfile, json, io
+import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np
 # https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 from . import cred 
 from adobe.pdfservices.operation.auth.credentials import Credentials
@@ -209,3 +209,48 @@ def extractMS(filepath):
     #     array = x
     #     print(array[1])
     return combined_data, tableQ
+
+""" This model only compares word vectors"""
+def word2vec_calculate_similarity(response, markscheme):
+    # Tokenize and get Word2Vec vectors for each token
+    response_vectors = [token.vector for token in nlp(response) if not token.is_stop and not token.is_punct]
+    markscheme_vectors = [token.vector for token in nlp(markscheme) if not token.is_stop and not token.is_punct]
+    # If either of the vectors is empty, return a low similarity score
+    if not response_vectors or not markscheme_vectors:
+        return 0.0
+
+     # Calculate the cosine similarity between the vectors
+    similarity_score = np.dot(np.sum(response_vectors, axis=0), np.sum(markscheme_vectors, axis=0))
+    response_norm = np.linalg.norm(np.sum(response_vectors, axis=0))
+    markscheme_norm = np.linalg.norm(np.sum(markscheme_vectors, axis=0))
+    # Normalize the similarity score to be in range [-1, 1]
+    if response_norm > 0 and markscheme_norm > 0:
+        similarity_score /= (response_norm * markscheme_norm)
+
+    return similarity_score
+
+
+""" model_used can take in 1 2 or 3, 1 = word2vec, 2 = use, 3 = both"""
+def output_mark(response, markscheme, word2vec_threshold=0.8):
+    word2vec_similarity_score = 0
+    word2vec_similarity_score = word2vec_calculate_similarity(response, markscheme)
+    print("Word2vec (threshold: {}): {}".format(word2vec_threshold, word2vec_similarity_score))
+    return word2vec_similarity_score > word2vec_threshold
+
+""" For each point given by the student, compare it against each markscheme point which have not been used and award a mark if they are similar
+ If a mark is awarded (or more), return a list of indexes in markscheme_point used
+ Note: 1 point can be awarded multiple marks """
+def mark_per_point(student_point, markscheme, indexes_not_allowed):
+    marks = 0
+    for i in range(len(markscheme)):
+        if i not in indexes_not_allowed:
+            print("\nYour point: {}".format(student_point), end=" || ")
+            print(markscheme[i])
+            if output_mark(student_point, markscheme[i]):
+                marks += 1
+                indexes_not_allowed.append(i)
+                print("Marks +1")
+            else:
+                print("Marks +0")
+            
+    return marks
