@@ -50,6 +50,10 @@ def split_string(string, parts):
     result = textwrap.wrap(string, sub_len)
     return result
 
+# Remove empty elements from array
+def clear_empty(array):
+    return [item for item in array if item != ""]
+
 def replace_blanks(array):
     output_arr = []
     blank_count = 0
@@ -209,16 +213,18 @@ def extractMS(filepath):
                             tableQ.append(currentRow)
                             tableQ.append(nextRow)     
                         else:
-                            normalQ.append([item for item in currentRow if item != ""])                   
-                            normalQ.append([item for item in nextRow if item != ""])                   
+                            normalQ.append(clear_empty(currentRow))                   
+                            normalQ.append(clear_empty(nextRow))                 
                     except:
-                        normalQ.append(currentRow)                   
+                        normalQ.append(clear_empty(currentRow))
         
     # for x in normalQ:
     #     array = x
     #     print(array[1])
     return normalQ, tableQ
-
+    
+    
+# Credit to Otto Sukpraput :))
 """ This model only compares word vectors"""
 def word2vec_calculate_similarity(response, markscheme):
     # Tokenize and get Word2Vec vectors for each token
@@ -240,16 +246,17 @@ def word2vec_calculate_similarity(response, markscheme):
 
 
 """ model_used can take in 1 2 or 3, 1 = word2vec, 2 = use, 3 = both"""
-def output_mark(response, markscheme, word2vec_threshold=0.8):
-    word2vec_similarity_score = 0
-    word2vec_similarity_score = word2vec_calculate_similarity(response, markscheme)
+def output_mark(response, markscheme, word2vec_threshold=0.7):
+    word2vec_similarity_score = 0 
+    word2vec_similarity_score = round(float(word2vec_calculate_similarity(response, markscheme)), 1)
+    print(type(word2vec_similarity_score))
     print("Word2vec (threshold: {}): {}".format(word2vec_threshold, word2vec_similarity_score))
     return word2vec_similarity_score > word2vec_threshold
 
 """ For each point given by the student, compare it against each markscheme point which have not been used and award a mark if they are similar
  If a mark is awarded (or more), return a list of indexes in markscheme_point used
  Note: 1 point can be awarded multiple marks """
-def mark_per_point(student_point, markscheme, indexes_not_allowed):
+def mark_per_point(student_point, markscheme, correct_points, indexes_not_allowed):
     marks = 0
     for i in range(len(markscheme)):
         if i not in indexes_not_allowed:
@@ -259,6 +266,7 @@ def mark_per_point(student_point, markscheme, indexes_not_allowed):
                 marks += 1
                 indexes_not_allowed.append(i)
                 print("Marks +1")
+                correct_points[i] = True
             else:
                 print("Marks +0")
             

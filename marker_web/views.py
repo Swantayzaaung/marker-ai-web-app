@@ -59,17 +59,10 @@ def practice(request):
             question = [row for row in normalQ if row[0] == key]
             if len(question) > 0:
                 array.append(question)
-                #print(question[0][1], end="")
-                max_marks = -1
                 if len(question[0]) > 2:
-                    if not question[0][2]:
-                        max_marks = 2
-                    else:
-                        max_marks = int(question[0][2])
-                else:
-                    max_marks = 2
-                print(max_marks)
-                mark_scheme_points = question[0][1].split(';')
+                    max_marks = int(question[0][2])
+                mark_scheme_points = [q for q in question[0][1].split(';') if q != ""]
+                correct_points = [False for i in range(len(mark_scheme_points))]
                 print(mark_scheme_points)
                 student_response = request.POST[key]
                 student_response_by_point = student_response.split('.')
@@ -77,7 +70,8 @@ def practice(request):
                 indexes_not_allowed = [] # passed by ref
                 marks = 0
                 for point in student_response_by_point:
-                    marks += mark_per_point(point, mark_scheme_points, indexes_not_allowed)
+                    marks += mark_per_point(point, mark_scheme_points, correct_points, indexes_not_allowed)
+                    print(correct_points)
                     if marks >= max_marks:
                         break
                 print("Total marks: {}".format(marks))
