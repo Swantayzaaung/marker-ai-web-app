@@ -19,6 +19,7 @@ def about(request):
 def practice(request):
     # https://stackoverflow.com/questions/34503412/download-and-save-pdf-file-with-python-requests-module
     if request.method == "GET":
+        longfilename = f"{request.GET['subject'].split('-')[0]}, {request.GET['year'].split('-')[0]}, {request.GET['month'].split('-')[0]}, {request.GET['variant']}"
         """try:
             filename = f"{request.GET['subject'].split('-')[-1]}_{request.GET['month']}{request.GET['year'][2:4]}_qp_{request.GET['variant']}"
             url = f"https://bestexamhelp.com/exam/cambridge-igcse/{request.GET['subject']}/{request.GET['year']}/{filename}.pdf"
@@ -44,7 +45,8 @@ def practice(request):
         questions = extractQP(QPpath)
         
         return render(request, "marker_web/practice.html", {
-            "questions": questions[1:]
+            "questions": questions[1:],
+            "filename": longfilename
         })
     elif request.method == "POST":
         MSpath = os.path.join(os.path.abspath(os.getcwd()), 'marker_web', 'bio m19 ms 42.zip')

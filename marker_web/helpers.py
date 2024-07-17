@@ -68,7 +68,7 @@ def replace_blanks(array):
         else:
             if blank_count > 0:
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
-                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}">lorem ipsum dolor sit amet</textarea><br>', combined_string)
                 output_arr.append(combined_string)
             output_arr.append(s)
             blank_count = 0
@@ -86,7 +86,7 @@ def replace_blanks(array):
                 
     if blank_count > 0:
         combined_string = ''.join(array[startIndex:startIndex+blank_count])
-        combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
+        combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}">lorem ipsum dolor sit amet</textarea><br>', combined_string)
         output_arr.append(combined_string)   
             
     return output_arr
@@ -188,35 +188,36 @@ def extractMS(filepath):
 
     # Use a wildcard pattern to match all CSV files in the directory
     # Initialize an empty list to store rows from each file
-    combined_data = []
+    normalQ = []
     tableQ = []
-    # Read and append rows from each CSV file to the combined_data list
+    # Read and append rows from each CSV file to the normalQ list
     for file in csv_files:
         with archive.open(file) as csvfile:
             text = io.TextIOWrapper(csvfile, encoding='utf-8-sig')
             reader = csv.reader(text)
             header = next(reader)
             if 'Question' in header[0]:
-                if not combined_data:  # Include header only once
-                    combined_data.append(list(filter(None, header)))
-                # combined_data.extend(row for row in reader)
+                if not normalQ:  # Include header only once
+                    normalQ.append(list(filter(None, header)))
+                # normalQ.extend(row for row in reader)
                 for row in reader:
                     currentRow = [item.strip() for item in row]
                     try:
                         nextRow = [item.strip() for item in next(reader)]
+                        # https://www.geeksforgeeks.org/remove-empty-elements-from-an-array-in-javascript/
                         if nextRow[0] == '':
                             tableQ.append(currentRow)
                             tableQ.append(nextRow)     
                         else:
-                            combined_data.append(currentRow)                   
-                            combined_data.append(nextRow)                   
+                            normalQ.append([item for item in currentRow if item != ""])                   
+                            normalQ.append([item for item in nextRow if item != ""])                   
                     except:
-                        combined_data.append(currentRow)                   
+                        normalQ.append(currentRow)                   
         
-    # for x in combined_data:
+    # for x in normalQ:
     #     array = x
     #     print(array[1])
-    return combined_data, tableQ
+    return normalQ, tableQ
 
 """ This model only compares word vectors"""
 def word2vec_calculate_similarity(response, markscheme):

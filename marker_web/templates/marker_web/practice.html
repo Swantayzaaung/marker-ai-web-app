@@ -2,6 +2,8 @@
 {% load static %}
 {% block title %}Practice{% endblock %}
 {% block body %}
+    <h1 class="text-purple">{{ filename }}</h1>
+    <hr>
     <form action="{% url 'practice' %}" method="post">
         {% csrf_token %}
         {% for question in questions %}
