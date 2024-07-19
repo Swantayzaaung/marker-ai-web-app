@@ -249,8 +249,8 @@ def word2vec_calculate_similarity(response, markscheme):
 def output_mark(response, markscheme, word2vec_threshold=0.7):
     word2vec_similarity_score = 0 
     word2vec_similarity_score = round(float(word2vec_calculate_similarity(response, markscheme)), 1)
-    print(type(word2vec_similarity_score))
-    print("Word2vec (threshold: {}): {}".format(word2vec_threshold, word2vec_similarity_score))
+    # print(type(word2vec_similarity_score))
+    # print("Word2vec (threshold: {}): {}".format(word2vec_threshold, word2vec_similarity_score))
     return word2vec_similarity_score > word2vec_threshold
 
 """ For each point given by the student, compare it against each markscheme point which have not been used and award a mark if they are similar
@@ -260,14 +260,13 @@ def mark_per_point(student_point, markscheme, correct_points, indexes_not_allowe
     marks = 0
     for i in range(len(markscheme)):
         if i not in indexes_not_allowed:
-            print("\nYour point: {}".format(student_point), end=" || ")
-            print(markscheme[i])
+            # print("\nYour point: {}".format(student_point), end=" || ")
+            # print(markscheme[i])
             if output_mark(student_point, markscheme[i]):
                 marks += 1
                 indexes_not_allowed.append(i)
-                print("Marks +1")
+                # print("Marks +1")
                 correct_points[i] = True
-            else:
-                print("Marks +0")
-            
+            # else:
+                # print("Marks +0")
     return marks

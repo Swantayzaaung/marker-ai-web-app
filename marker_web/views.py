@@ -1,10 +1,10 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .helpers import createPDFzip, extractQP, extractMS, split_string, mark_per_point
-from compare.startup import nlp
+from django.views.decorators.csrf import csrf_exempt
 
-import requests, tempfile, os
+import requests, tempfile, os, json
 
 # Create your views here.
 
@@ -48,44 +48,48 @@ def practice(request):
             "questions": questions[1:],
             "filename": longfilename
         })
-    elif request.method == "POST":
+        
+@csrf_exempt
+def results(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        all_data = []
         MSpath = os.path.join(os.path.abspath(os.getcwd()), 'marker_web', 'bio m19 ms 42.zip')
         normalQ, tableQ = extractMS(MSpath)
-        array = []
-        numbers = list(request.POST.keys())
-        print(numbers)
-        # print('1' in normalQ[1])
-        for key in numbers:
-            question = [row for row in normalQ if row[0] == key]
+        for key in list(data.keys())[1:]:
+            answer = []
+            question = [row for row in normalQ if row[0] == key][0]
             if len(question) > 0:
-                array.append(question)
                 if len(question[0]) > 2:
-                    max_marks = int(question[0][2])
-                mark_scheme_points = [q for q in question[0][1].split(';') if q != ""]
+                    max_marks = int(question[2])
+                mark_scheme_points = [q for q in question[1].split(';') if q != ""]
                 correct_points = [False for i in range(len(mark_scheme_points))]
-                print(mark_scheme_points)
-                student_response = request.POST[key]
-                student_response_by_point = student_response.split('.')
-
+                # print(mark_scheme_points)
+                if type(data[key]) == list:
+                    for item in data[key]:
+                        answer.extend(item.split('.'))
+                else:
+                    answer = data[key].split('.')
+                print(answer)
+                
                 indexes_not_allowed = [] # passed by ref
                 marks = 0
-                for point in student_response_by_point:
+                for point in answer:
                     marks += mark_per_point(point, mark_scheme_points, correct_points, indexes_not_allowed)
-                    print(correct_points)
                     if marks >= max_marks:
                         break
                 print("Total marks: {}".format(marks))
+                
+                marked_data = {
+                    "mark_scheme_points": mark_scheme_points,
+                    "correct_points": correct_points, 
+                    "marks": marks
+                }
+                
+                all_data.append(marked_data)
 
-            # if len(question[0]) > 0:
-            #     print(f"Question is {question[0][1]}\n")
-
-                        
-        return render(request, "marker_web/results.html", {
-            "normalQ": array,
-            "tableQ": tableQ,
-            "answers": request.POST
+                # if len(question[0]) > 0:
+                #     print(f"Question is {question[0][1]}\n")
+        return JsonResponse({
+            "all_data": all_data
         })
-        
-    
-def results(request):
-    return render(request, "marker_web/results.html")
