@@ -28,8 +28,8 @@
                         <h5>Subject: </h5>
                         <select required="true" class="form-select form-select-sm form-control" name="subject" id="subject">
                             <option selected disabled value="">Subject code</option>
-                            <option value="Biology-0610">Biology (0610)</option>
-                            <option value="Computer Science-0478">Computer Science (0478)</option>
+                            <option value="biology_0610">Biology (0610)</option>
+                            <option value="computer-science_0478">Computer Science (0478)</option>
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
@@ -45,9 +45,9 @@
                         <h5>Month: </h5>
                         <select required class="form-select form-select-sm form-control" name="month" id="month">
                             <option selected disabled value="">Month</option>
-                            <option value="Feb/Mar-m">Feb/Mar</option>
-                            <option value="May/June-s">May/June</option>
-                            <option value="Oct/Nov-w">Oct/Nov</option>
+                            <option value="Feb/Mar_m">Feb/Mar</option>
+                            <option value="May/June_s">May/June</option>
+                            <option value="Oct/Nov_w">Oct/Nov</option>
                         </select>
                     </div>
                     <div class="d-flex flex-row align-items-center my-2">
@@ -98,24 +98,29 @@
 
                     let variantList = ['11','12','13'];
                     subject.addEventListener('change', () => {
-                        console.log(subject.value);
                         year.disabled = month.disabled = false;
                         variant.innerHTML = `<option selected disabled value="">Select paper variant</option>`;
                         variantList.forEach((e, index) => {
                             let newOption = document.createElement('option');
-                            if (subject.value === 'Biology-0610') {
+                            if (subject.value === 'biology_0610') {
                                 variantList[index] = e.replace('1', '4');
                             } else {
                                 variantList[index] = e.replace('4', '1');
                             }
                             newOption.innerHTML = newOption.value = variantList[index]
+							
                             variant.appendChild(newOption);
                         })
+						if (month.value === 'Feb/Mar_m') {
+							variant[2].selected = true;
+                            variant.getElementsByTagName('option')[1].hidden = true;
+                            variant.lastChild.hidden = true;
+						}
                         console.log(variantList);
                     })
                     month.addEventListener('change', () => {
                         variant.disabled = false;
-                        if (month.value === 'Feb/Mar-m') {
+                        if (month.value === 'Feb/Mar_m') {
                             console.log(variant.firstChild)
                             variant[2].selected = true;
                             variant.getElementsByTagName('option')[1].hidden = true;

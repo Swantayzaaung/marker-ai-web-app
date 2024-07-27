@@ -11,6 +11,7 @@
 import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np, math, textwrap
 # https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 from . import cred 
+from .models import *
 from compare.startup import nlp
 from adobe.pdfservices.operation.auth.credentials import Credentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
@@ -72,7 +73,7 @@ def replace_blanks(array):
         else:
             if blank_count > 0:
                 combined_string = ''.join(array[startIndex:startIndex+blank_count])
-                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}">lorem ipsum dolor sit amet</textarea><br>', combined_string)
+                combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
                 output_arr.append(combined_string)
             output_arr.append(s)
             blank_count = 0
@@ -90,7 +91,7 @@ def replace_blanks(array):
                 
     if blank_count > 0:
         combined_string = ''.join(array[startIndex:startIndex+blank_count])
-        combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}">lorem ipsum dolor sit amet</textarea><br>', combined_string)
+        combined_string = re.sub(r'(\.{4,}\s*)+', f'<br><textarea required class="form-control" placeholder="Enter answer for {question_no}{sub_question}{sub_index}" name="{question_no}{sub_question}{sub_index}"></textarea><br>', combined_string)
         output_arr.append(combined_string)   
             
     return output_arr

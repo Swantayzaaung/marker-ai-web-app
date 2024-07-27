@@ -1,65 +1,36 @@
-{% extends "marker_web/layout.html" %}
-{% load static %}
-{% block title %}Practice{% endblock %}
+{% extends "marker_web/layout.html" %} {% load static %} 
+{% block title%}Practice{% endblock %} 
 {% block body %}
-    <h1 class="text-purple">{{ filename }}</h1>
-    <hr>
-    <form method="post">
-        {% csrf_token %}
-        {% for question in questions %}
-            <div class="jumbotron container-fluid bg-white">
-                <!-- <h5>Question {{ question.0 }}</h5>
+<h1 class="text-purple">{{ filename }}</h1>
+<hr />
+<!-- https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_overlay_text -->
+<div class="overlay">
+    <div class="overlay-text">
+        <div
+            id="loading-area"
+            class="text-white p-5 text-center justify-content-center align-items-center"
+        >
+            <br />
+            <div id="loading" style="border: 5px dotted #f6f0fe"></div>
+            &nbsp; Loading results
+        </div>
+    </div>
+</div>
+<form method="post" action="{% url 'results' %}">
+    {% csrf_token %} {% for question in questions %}
+    <div class="jumbotron container-fluid bg-white">
+        <!-- <h5>Question {{ question.0 }}</h5>
                 {{ question.1 }}
                 <br><hr> -->
-                <h2 class="text-purple">Question {{ forloop.counter }}</h2>
-                {% for item in question %}
-                    {{ item | safe}}
-                {% endfor %}
-                <!-- <hr> -->
-                <!-- {{ question }} -->
+        <h2 class="text-purple">Question {{ forloop.counter }}</h2>
+        {% for item in question %} {{ item | safe}} {% endfor %}
+        <!-- <hr> -->
+        <!-- {{ question }} -->
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-purple">Submit answer</button>
+</form>
 
-            </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-purple">Submit answer</button>
-    </form>
-
-    <script>
-        let paperForm = document.querySelector('form');
-        paperForm.onsubmit = (event) => {
-            event.preventDefault();
-
-            const formData = new FormData(event.target);
-            const formObj = {};
-
-            formData.forEach((value, key) => {
-                // If form data already exists, store the next instance into an array
-                if (formObj[key]) {
-                    if (Array.isArray(formObj[key])) {
-                        formObj[key].push(value);
-                    } else {
-                        formObj[key] = [formObj[key], value]
-                    }
-                } else {
-                    formObj[key] = value;
-                }
-            });
-            
-            fetch('/results', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formObj)
-            })
-            .then(response => response.json())
-            .then(result => {
-                // let marked_data = document.createElement('div');
-                // marked_data.innerHTML = `${result["mark_scheme_points"]} <br> ${result["correct_points"]}`;
-                // answer.after(marked_data)
-                console.log(result)
-            });
-            
-            return false;
-        }
-    </script>
+<script src="{% static 'marker_web/practice.js' %}">
+</script>
 {% endblock %}

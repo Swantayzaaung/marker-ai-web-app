@@ -2,18 +2,6 @@
 {% load static %}
 {% block body %}
 <div class="jumbotron container-fluid bg-white">
-    <h2>Normal Question</h2>
-    <!-- {{ normalQ }} -->
-    {% for question in normalQ %}
-        {{ question }}<br><hr>
-    {% endfor %}
-</div>
-<div class="jumbotron container-fluid bg-white">
-    <h2>Table Question</h2>
-    {{ tableQ }}
-</div>
-<div class="jumbotron container-fluid bg-white">
-    <h2>Answers</h2>
-    {{ answers }}
+    {{ all_data }}
 </div>
 {% endblock %}
