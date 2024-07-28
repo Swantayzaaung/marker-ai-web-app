@@ -8,21 +8,24 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np, math, textwrap
+import logging, os, csv, glob, re, zipfile, json, io, spacy, numpy as np, math, textwrap, requests, tempfile
 # https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
-from . import cred 
+from . import cred
 from .models import *
 from compare.startup import nlp
-from adobe.pdfservices.operation.auth.credentials import Credentials
+from adobe.pdfservices.operation.auth.service_principal_credentials import ServicePrincipalCredentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
-from adobe.pdfservices.operation.pdfops.options.extractpdf.extract_pdf_options import ExtractPDFOptions
-from adobe.pdfservices.operation.pdfops.options.extractpdf.extract_element_type import ExtractElementType
-from adobe.pdfservices.operation.pdfops.options.extractpdf.extract_renditions_element_type import \
+from adobe.pdfservices.operation.io.cloud_asset import CloudAsset
+from adobe.pdfservices.operation.io.stream_asset import StreamAsset
+from adobe.pdfservices.operation.pdf_services import PDFServices
+from adobe.pdfservices.operation.pdf_services_media_type import PDFServicesMediaType
+from adobe.pdfservices.operation.pdfjobs.jobs.extract_pdf_job import ExtractPDFJob
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_element_type import ExtractElementType
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_pdf_params import ExtractPDFParams
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.table_structure_type import TableStructureType
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_renditions_element_type import \
     ExtractRenditionsElementType
-from adobe.pdfservices.operation.pdfops.options.extractpdf.table_structure_type import TableStructureType
-from adobe.pdfservices.operation.execution_context import ExecutionContext
-from adobe.pdfservices.operation.io.file_ref import FileRef
-from adobe.pdfservices.operation.pdfops.extract_pdf_operation import ExtractPDFOperation
+from adobe.pdfservices.operation.pdfjobs.result.extract_pdf_result import ExtractPDFResult
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
@@ -99,40 +102,50 @@ def replace_blanks(array):
 # Credit: https://developer.adobe.com/document-services/docs/overview/pdf-extract-api/howtos/extract-api/
 def createPDFzip(filepath, filename):
     try:
-        # get base path.
-        input_pdf = os.path.join(filepath, filename)
+        file = open(os.path.join(filepath, filename), 'rb')
+        input_stream = file.read()
+        file.close()
 
-        # Initial setup, create credentials instance.
-        credentials = Credentials.service_principal_credentials_builder(). \
-            with_client_id(cred.PDF_SERVICES_CLIENT_ID). \
-            with_client_secret(cred.PDF_SERVICES_CLIENT_SECRET). \
-            build()
+        # Initial setup, create credentials instance
+        credentials = ServicePrincipalCredentials(
+            client_id=cred.PDF_SERVICES_CLIENT_ID,
+            client_secret=cred.PDF_SERVICES_CLIENT_SECRET
+        )
 
-        # Create an ExecutionContext using credentials and create a new operation instance.
-        execution_context = ExecutionContext.create(credentials)
-        extract_pdf_operation = ExtractPDFOperation.create_new()
+        # Creates a PDF Services instance
+        pdf_services = PDFServices(credentials=credentials)
 
-        # Set operation input from a source file.
-        source = FileRef.create_from_local_file(input_pdf)
-        extract_pdf_operation.set_input(source)
+        # Creates an asset(s) from source file(s) and upload
+        input_asset = pdf_services.upload(input_stream=input_stream, mime_type=PDFServicesMediaType.PDF)
 
-        # Build ExtractPDF options and set them into the operation
-        extract_pdf_options: ExtractPDFOptions = ExtractPDFOptions.builder() \
-            .with_elements_to_extract([ExtractElementType.TEXT, ExtractElementType.TABLES]) \
-            .with_element_to_extract_renditions(ExtractRenditionsElementType.TABLES) \
-            .with_table_structure_format(TableStructureType.CSV) \
-            .build()
-        extract_pdf_operation.set_options(extract_pdf_options)
+        # Create parameters for the job
+        extract_pdf_params = ExtractPDFParams(
+            elements_to_extract=[ExtractElementType.TEXT, ExtractElementType.TABLES],
+            elements_to_extract_renditions=[ExtractRenditionsElementType.TABLES, ExtractRenditionsElementType.FIGURES],
+            table_structure_type=TableStructureType.CSV
+        )
 
-        # Execute the operation.
-        result: FileRef = extract_pdf_operation.execute(execution_context)
+        # Creates a new job instance
+        extract_pdf_job = ExtractPDFJob(input_asset=input_asset, extract_pdf_params=extract_pdf_params)
 
-        # Save the result to the specified location.
-        result.save_as(f"{filename}.zip")
-    except (ServiceApiException, ServiceUsageException, SdkException):
-        logging.exception("Exception encountered while executing operation")
+        # Submit the job and gets the job result
+        location = pdf_services.submit(extract_pdf_job)
+        pdf_services_response = pdf_services.get_job_result(location, ExtractPDFResult)
+
+        # Get content from the resulting asset(s)
+        result_asset: CloudAsset = pdf_services_response.get_result().get_resource()
+        stream_asset: StreamAsset = pdf_services.get_content(result_asset)
+
+        # Creates an output stream and copy stream asset's content to it
+        with open(os.path.join(filepath, f'{filename}.zip'), "wb") as file:
+            file.write(stream_asset.get_input_stream())
+
+    except (ServiceApiException, ServiceUsageException, SdkException) as e:
+        logging.exception(f'Exception encountered while executing operation: {e}')
         
 def extractQP(filepath):
+    filename = os.path.basename(os.path.normpath(filepath))
+    print(filename)
     archive = zipfile.ZipFile(filepath, 'r')
     jsonentry = archive.open('structuredData.json')
     jsondata = jsonentry.read()
@@ -140,9 +153,11 @@ def extractQP(filepath):
     questions = []
     question = []
     index=1
-    currentNum = ""
+    img_lists = []
+    img_list = []
     for i in range(len(data["elements"])):
         if 'Text' in data['elements'][i]:
+            addStart = True
             currentText = data['elements'][i]["Text"].strip()
             try:
                 nextText = data["elements"][i+1]["Text"].strip()
@@ -150,17 +165,45 @@ def extractQP(filepath):
                 nextText = ""
 
             # Split the text up into different question numbers
-            if len(currentText) == 1 or currentText.split(" ")[0] == str(index):
-                if nextText != "":
-                    if nextText.strip()[0] != '.':
-                        if currentText == str(index):
+            if re.search(r'[0-9]', currentText): # contains number
+                if nextText: # it has follow up text
+                    if nextText.strip()[0] != '.': # follow up text is not blank
+                        if currentText == str(index):  # only contains number
                             index+=1
                             if question != []:
                                 questions.append(replace_blanks(question)[1:])
-                                # questions.append(question)
                                 question = []
-            question.append(currentText)
-
+                            if img_list != []:
+                                img_lists.append(img_list)
+                                img_list = []
+                            
+                        elif currentText.split(' ')[0] == str(index) and "INSTRUCTIONS" not in nextText: # contains number followed by other stuff
+                            # print()
+                            index+=1
+                            if question != []:
+                                questions.append(replace_blanks(question)[1:])
+                                question = []
+                                question.extend(currentText.split(' ')[0:2])
+                                question.extend(currentText.split(')')[1:])
+                                addStart = False
+                            if img_list != []:
+                                img_lists.append(img_list)
+                                img_list = []
+                                
+            if addStart:
+                question.append(currentText)
+        if 'filePaths' in data['elements'][i]:
+            fp = data['elements'][i]['filePaths']
+            for imgPath in fp:
+                if imgPath.endswith('png'):
+                    needed_path = os.path.join(filepath + ' pictures', imgPath)
+                    if os.path.exists(needed_path):
+                        print("already exist")
+                    else:
+                        archive.extract(imgPath, filepath + ' pictures')
+                        print("extracted",imgPath)
+                    img_list.append(f'/media/downloads/{filename} pictures/{imgPath}')
+                    
     questions.append(replace_blanks(question)[1:])
     # questions.append(question)
 
@@ -179,7 +222,7 @@ def extractQP(filepath):
             lastIndex = questions[-1].index(item) + 1
     questions[-1][lastIndex:] = [""] * (len(questions[-1]) - lastIndex)
 
-    return questions
+    return questions, img_lists
 
 # def isSubNumber(element):
 #     if element.
@@ -266,8 +309,8 @@ def mark_per_point(student_point, markscheme, correct_points, indexes_not_allowe
             if output_mark(student_point, markscheme[i]):
                 marks += 1
                 indexes_not_allowed.append(i)
-                # print("Marks +1")
                 correct_points[i] = True
+                # print("Marks +1")
             # else:
                 # print("Marks +0")
     return marks

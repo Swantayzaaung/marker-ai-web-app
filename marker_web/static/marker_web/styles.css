@@ -55,7 +55,11 @@ select {
   color: white;
 }
 
-.jumbotron img {
+.practice-img {
+  max-width: 100%;
+}
+
+.heroblock-img {
   border-radius: 50%;
   border: #604FA3;
   border-style: inset;

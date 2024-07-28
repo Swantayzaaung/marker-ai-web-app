@@ -60,6 +60,7 @@ paperForm.onsubmit = (event) => {
         
         // Save current state
         localStorage.setItem('results', JSON.stringify(results))
+        localStorage.setItem('formdata', JSON.stringify(formObj))
         
         history.pushState(
             { 
@@ -80,21 +81,7 @@ window.addEventListener("popstate", function (event) {
         const state = event.state;
         console.log(state)
         // Restore the form data
-        Object.keys(state.formData).forEach((key) => {
-
-            let inputs = document.querySelectorAll(`textarea[name="${key}"]`)
-            console.log(key, inputs)
-            if (inputs.length > 0) {
-                if (inputs.length > 1) {
-                    inputs.forEach((item, index) => {
-                        item.value = state.formData[key][index]
-                    })
-                } else {
-                    inputs[0].value = state.formData[key]
-                }
-            }
-            console.log(state.formData[key])
-        });
+        restoreForm(state.formData)
 
         // Remove all existing results divs
         document.querySelectorAll('form div[class="results_div"]').forEach((div) => div.remove());
@@ -102,6 +89,8 @@ window.addEventListener("popstate", function (event) {
         // Restore the results if they exist
         if (state.results) {
             generate_results(state.results)
+            document.querySelectorAll('textarea').forEach(textarea => textarea.disabled = true);
+            document.querySelector('button[type="submit"]').disabled = true;
         } else {
             // Clear the form and results if there's no state (initial load)
             document.querySelectorAll('form div[class="results_div"]').forEach((div) => div.remove());
@@ -117,11 +106,18 @@ window.addEventListener('load', () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('result')) {
         // https://stackoverflow.com/questions/28314368/how-to-maintain-state-after-a-page-refresh-in-react-js
+        console.log(localStorage.getItem('results'))
         let results = JSON.parse(localStorage.getItem('results'))
         console.log(results)
         if (results) {
             generate_results(results)
         }
+        restoreForm(localStorage.getItem('formdata'))
+        document.querySelectorAll('textarea').forEach(textarea => {
+            console.log(textarea);
+            textarea.disabled = true
+        });
+        document.querySelector('button[type="submit"]').disabled = true;
     }
 })
 
@@ -164,4 +160,22 @@ function generate_results(results){
         });
         last.after(marked_data);
     }
+}
+
+function restoreForm(formdata) {
+    Object.keys(formdata).forEach((key) => {
+
+        let inputs = document.querySelectorAll(`textarea[name="${key}"]`)
+        console.log(key, inputs)
+        if (inputs.length > 0) {
+            if (inputs.length > 1) {
+                inputs.forEach((item, index) => {
+                    item.value = formdata[key][index]
+                })
+            } else {
+                inputs[0].value = formdata[key]
+            }
+        }
+        console.log(formdata[key])
+    });
 }

@@ -60,7 +60,10 @@ select {
 }
 
 // Image styles
-.jumbotron img {
+.practice-img {
+    max-width: 100%;
+}
+.heroblock-img {
     border-radius: 50%;
     border: $darkpurple;
     border-style: inset;

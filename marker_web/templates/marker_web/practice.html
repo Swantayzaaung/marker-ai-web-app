@@ -1,7 +1,7 @@
 {% extends "marker_web/layout.html" %} {% load static %} 
 {% block title%}Practice{% endblock %} 
 {% block body %}
-<h1 class="text-purple">{{ filename }}</h1>
+<h1 class="text-purple">{{ longfilename }}</h1>
 <hr />
 <!-- https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_overlay_text -->
 <div class="overlay">
@@ -17,16 +17,39 @@
     </div>
 </div>
 <form method="post" action="{% url 'results' %}">
-    {% csrf_token %} {% for question in questions %}
-    <div class="jumbotron container-fluid bg-white">
-        <!-- <h5>Question {{ question.0 }}</h5>
-                {{ question.1 }}
-                <br><hr> -->
-        <h2 class="text-purple">Question {{ forloop.counter }}</h2>
-        {% for item in question %} {{ item | safe}} {% endfor %}
-        <!-- <hr> -->
-        <!-- {{ question }} -->
-    </div>
+    {% csrf_token %} 
+    <input type="hidden" name="ms" value="{{ filename }} {{ url }}">
+    {% for question, img_list in questions %}
+        <div class="jumbotron container-fluid bg-white">
+            <h2 class="text-purple">Question {{ forloop.counter }}</h2>
+            {% for item in question %} 
+                {{ item | safe}} 
+            {% endfor %}
+            <hr>
+            <!-- {{ question }} -->
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for img in img_list %}
+                        <div class="
+                            carousel-item
+                            {% if forloop.counter == 1 %}
+                                active
+                            {% endif %}
+                        ">
+                            <img src="{{ img }}" class="m-auto d-block w-50">
+                        </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
     {% endfor %}
     <button type="submit" class="btn btn-purple">Submit answer</button>
 </form>
