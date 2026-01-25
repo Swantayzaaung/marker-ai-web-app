@@ -6,7 +6,7 @@ Disclaimer: This is a very rudimentary passion project that I worked on when I w
 This inspired me to create Marker AI, as an experimentation of how open-ended past paper exam questions could work using an AI similarity checker.
 
 # Libraries used
-- `Django`
+- `Django` for the web app operation
 - `spacy` as an intermediate package manager (used for installing en_core_web_lg)
 - `tensorflow` for the AI components
 - `pdfservices-sdk` for the Adobe API
