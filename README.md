@@ -5,6 +5,13 @@ Disclaimer: This is a very rudimentary passion project that I worked on when I w
 
 This inspired me to create Marker AI, as an experimentation of how open-ended past paper exam questions could work using an AI similarity checker.
 
+# Libraries used
+- `Django`
+- `spacy` as an intermediate package manager (used for installing en_core_web_lg)
+- `tensorflow` for the AI components
+- `pdfservices-sdk` for the Adobe API
+- `requests` for downloading data from Best Exam Help
+
 # How the web app works
 - Marker AI uses the requests interface to download the past paper from Best Exam Help, a free past paper website.
 - And then, it uses the Adobe API to extract text, table and image data from the PDF file. At the same time, I download the mark scheme file and run the same process on it too, and keep it in store.
